@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción a Cloud</title>
+    <style>
+        /* --- ESTILOS GENERALES TIPO CISCO / LMS --- */
+        :root {
+            --cisco-dark: #00263e; /* Azul oscuro header */
+            --cisco-blue: #00bceb; /* Azul brillante highlights */
+            --cisco-gray: #f2f2f2; /* Fondo */
+            --text-main: #333333;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--cisco-gray);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR DE NAVEGACIÓN --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100%;
+            z-index: 100;
+        }
+
+        .logo-area {
+            background-color: var(--cisco-dark);
+            color: white;
+            padding: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            border-bottom: 3px solid var(--cisco-blue);
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-links li a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #555;
+            border-bottom: 1px solid #eee;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links li a:hover {
+            background-color: #f9f9f9;
+            color: var(--cisco-blue);
+            padding-left: 25px; /* Efecto deslizamiento */
+        }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 0;
+            overflow-y: auto; /* Scroll aquí */
+            scroll-behavior: smooth;
+        }
+
+        .header-bar {
+            background-color: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 40px 60px 40px;
+        }
+
+        h1 { font-size: 2rem; color: var(--text-main); margin: 0; }
+        h2 { 
+            color: var(--cisco-dark); 
+            border-left: 5px solid var(--cisco-blue); 
+            padding-left: 15px; 
+            margin-top: 50px; 
+            font-size: 1.5rem;
+        }
+        h3 { color: #555; margin-top: 0; }
+
+        /* --- TARJETAS DE CONTENIDO --- */
+        .module-box {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .concept-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-top: 3px solid var(--cisco-dark);
+            padding: 20px;
+            border-radius: 4px;
+        }
+        .concept-card strong { color: var(--cisco-blue); display: block; margin-bottom: 5px; font-size: 1.1rem; }
+
+        /* TABLA */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            font-size: 0.95rem;
+        }
+        th { background-color: var(--cisco-dark); color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border: 1px solid #ddd; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+
+        /* BOTONES DE ENLACES */
+        .btn-group { display: flex; gap: 10px; }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: white;
+            transition: 0.3s;
+        }
+        .btn-blue { background-color: var(--cisco-blue); }
+        .btn-dark { background-color: var(--cisco-dark); }
+        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* --- JUEGO MEMORY --- */
+        .lab-section {
+            background-color: #e6f7fc; /* Fondo azul muy claro */
+            border: 1px solid #bce0ef;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        .m-card {
+            background-color: white;
+            height: 80px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.4s;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .m-card.flip {
+            transform: rotateY(180deg);
+            cursor: default;
+            border-color: var(--cisco-blue);
+        }
+
+        .m-front, .m-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden;
+            font-size: 0.85rem;
+            padding: 5px;
+            box-sizing: border-box;
+            font-weight: bold;
+            color: var(--cisco-dark);
+        }
+
+        .m-front {
+            background-color: #fff; /* Cara con texto */
+            transform: rotateY(180deg);
+        }
+
+        .m-back {
+            background-color: var(--cisco-dark); /* Cara oculta */
+            color: transparent;
+        }
+        
+        .m-back::after {
+            content: "?";
+            color: rgba(255,255,255,0.2);
+            font-size: 2rem;
+        }
+
+        #game-status {
+            font-weight: bold; 
+            color: var(--cisco-blue); 
+            min-height: 24px;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="logo-area">NUBE</div>
+        <ul class="nav-links">
+            <li><a href="#intro">1. Introducción y Recursos</a></li>
+            <li><a href="#types">2. Tipos de Nube</a></li>
+            <li><a href="#models">3. Modelos de Servicio</a></li>
+            <li><a href="#aws">4. Componentes AWS</a></li>
+            <li><a href="#activity">5. Actividad Práctica</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="header-bar">
+            <h1>Capítulo 1: Construcción de Infraestructura</h1>
+            <span style="color: #666; font-size: 0.9rem;">Estado: 🟢 En Progreso</span>
+        </div>
+
+        <div class="content-container">
+
+            <section id="intro">
+                <div class="module-box">
+                    <h3>📚 Recursos Extras</h3>
+                    <p>Accede a los materiales de estudio.</p>
+                    <div class="btn-group">
+                        <a href="https://view.genially.com/6973de298cb2175a69ee932a" target="_blank" class="btn btn-blue">Abrir Genially</a>
+                        <a href="https://kahoot.it/solo?quizId=9b1fd6ed-5e38-40d6-98f1-e452400f9ccd&gameMode=nano" target="_blank" class="btn btn-dark">Kahoot (Nano)</a>
+                        <a href="https://kahoot.it/solo?quizId=9b1fd6ed-5e38-40d6-98f1-e452400f9ccd&gameMode=flashcards" target="_blank" class="btn btn-dark">Flashcards</a>
+                    </div>
+                </div>
+            </section>
+
+            <section id="types">
+                <h2>1. Tipos de Nube (Despliegue)</h2>
+                <p>Define dónde se ubica la infraestructura y quién la administra.</p>
+                
+                <div class="grid-3">
+                    <div class="concept-card">
+                        <strong>☁️ Nube Pública</strong>
+                        <p>Infraestructura compartida propiedad de un proveedor (AWS/Azure).</p>
+                        <ul style="font-size: 0.85rem; padding-left: 20px; color:#555">
+                            <li>Bajo costo inicial.</li>
+                            <li>Escalabilidad ilimitada.</li>
+                        </ul>
+                    </div>
+                    <div class="concept-card">
+                        <strong>🔒 Nube Privada</strong>
+                        <p>Infraestructura dedicada exclusivamente a una organización.</p>
+                        <ul style="font-size: 0.85rem; padding-left: 20px; color:#555">
+                            <li>Mayor seguridad y control.</li>
+                            <li>Mayor costo (Mantener hardware).</li>
+                        </ul>
+                    </div>
+                    <div class="concept-card">
+                        <strong>🔗 Nube Híbrida</strong>
+                        <p>Conecta pública y privada. Permite el "Cloud Bursting".</p>
+                        <ul style="font-size: 0.85rem; padding-left: 20px; color:#555">
+                            <li>Flexibilidad total.</li>
+                            <li>Cumplimiento normativo.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="models">
+                <h2>2. Modelos de Servicio</h2>
+                <p>Define el nivel de responsabilidad compartida entre tú y el proveedor.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Modelo</th>
+                            <th>Definición Clave</th>
+                            <th>Tu Responsabilidad</th>
+                            <th>Ejemplo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>IaaS</b></td>
+                            <td>Infraestructura Básica</td>
+                            <td>S.O., Aplicaciones, Datos</td>
+                            <td>Amazon EC2</td>
+                        </tr>
+                        <tr>
+                            <td><b>PaaS</b></td>
+                            <td>Plataforma de Desarrollo</td>
+                            <td>Solo Aplicaciones y Datos</td>
+                            <td>Elastic Beanstalk</td>
+                        </tr>
+                        <tr>
+                            <td><b>SaaS</b></td>
+                            <td>Software Final</td>
+                            <td>Solo Configuración</td>
+                            <td>Gmail, Dropbox</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="aws">
+                <h2>3. Componentes Principales de AWS</h2>
+                <div class="module-box">
+                    <ul style="line-height: 1.8;">
+                        <li>💻 <b>Amazon EC2:</b> (Compute) Servidor virtual seguro y redimensionable.</li>
+                        <li>🗂️ <b>Amazon S3:</b> (Storage) Almacenamiento de objetos escalable (archivos, fotos).</li>
+                        <li>🌐 <b>Amazon VPC:</b> (Network) Red virtual aislada donde lanzas tus recursos.</li>
+                        <li>🛠️ <b>Amazon RDS:</b> (Database) Base de datos relacional gestionada (SQL).</li>
+                        <li>⚡ <b>AWS Lambda:</b> (Serverless) Ejecutar código sin aprovisionar servidores.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="activity">
+                <div class="lab-section">
+                    <h2 style="margin-top:0; border:none; text-align:center;">🧠 Checkpoint de Conocimiento</h2>
+                    <p>Instrucción: Empareja la <b>Definición Corta</b> con su <b>Ejemplo/Nombre</b>.</p>
+                    
+                    <div id="game-status">Selecciona una carta...</div>
+
+                    <div class="memory-grid" id="game-board">
+                        </div>
+
+                    <button onclick="initGame()" class="btn btn-blue" style="margin-top:20px; cursor:pointer;">Reiniciar Actividad</button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        // CONFIGURACIÓN DEL JUEGO: DEFINICIÓN <-> EJEMPLO
+        const pairs = [
+            { id: 1, text: "Servidor Virtual (Infra)", type: "def" },
+            { id: 1, text: "Amazon EC2", type: "ex" },
+
+            { id: 2, text: "Almacenamiento Archivos", type: "def" },
+            { id: 2, text: "Amazon S3", type: "ex" },
+
+            { id: 3, text: "Plataforma (Solo código)", type: "def" },
+            { id: 3, text: "PaaS", type: "ex" },
+
+            { id: 4, text: "Software listo para usar", type: "def" },
+            { id: 4, text: "SaaS (Gmail)", type: "ex" },
+
+            { id: 5, text: "Red Privada Aislada", type: "def" },
+            { id: 5, text: "VPC", type: "ex" },
+
+            { id: 6, text: "Compartida y Barata", type: "def" },
+            { id: 6, text: "Nube Pública", type: "ex" }
+        ];
+
+        let hasFlipped = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let matches = 0;
+
+        function initGame() {
+            const board = document.getElementById('game-board');
+            board.innerHTML = '';
+            matches = 0;
+            document.getElementById('game-status').innerText = "Selecciona una carta...";
+            
+            // Duplicar y mezclar no es necesario porque ya definí los pares arriba manualmente
+            // Solo necesitamos mezclar el array 'pairs'
+            let gameCards = [...pairs];
+            gameCards.sort(() => 0.5 - Math.random());
+
+            gameCards.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('m-card');
+                card.dataset.id = item.id; // El ID conecta la definición con el ejemplo
+
+                const front = document.createElement('div');
+                front.classList.add('m-front');
+                front.innerText = item.text;
+                
+                // Color diferente para diferenciar visualmente definición de ejemplo (Opcional, pero ayuda)
+                if(item.type === 'ex') {
+                    front.style.color = '#005073'; // Un azul un poco más oscuro para ejemplos
+                }
+
+                const back = document.createElement('div');
+                back.classList.add('m-back');
+
+                card.appendChild(front);
+                card.appendChild(back);
+                card.addEventListener('click', flipCard);
+                board.appendChild(card);
+            });
+        }
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flip');
+
+            if (!hasFlipped) {
+                hasFlipped = true;
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            // Coinciden si tienen el mismo dataset.id
+            let isMatch = firstCard.dataset.id === secondCard.dataset.id;
+
+            isMatch ? disableCards() : unflipCards();
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            
+            // Feedback visual de éxito
+            firstCard.querySelector('.m-front').style.backgroundColor = '#d4edda';
+            secondCard.querySelector('.m-front').style.backgroundColor = '#d4edda';
+            
+            matches++;
+            document.getElementById('game-status').innerText = "¡Correcto!";
+
+            if (matches === pairs.length / 2) {
+                document.getElementById('game-status').innerText = "🎉 ¡Módulo Completado Exitosamente! 🎉";
+            }
+
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+            document.getElementById('game-status').innerText = "Incorrecto, intenta de nuevo...";
+            setTimeout(() => {
+                firstCard.classList.remove('flip');
+                secondCard.classList.remove('flip');
+                document.getElementById('game-status').innerText = "Selecciona una carta...";
+                resetBoard();
+            }, 1000);
+        }
+
+        function resetBoard() {
+            [hasFlipped, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        // Iniciar al cargar
+        initGame();
+    </script>
+</body>
+</html>
